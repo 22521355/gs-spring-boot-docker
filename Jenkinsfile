@@ -1,32 +1,30 @@
 pipeline {
-    agent any // Chỉ định Jenkins agent sẽ thực thi pipeline
+    agent any
 
-    // Biến môi trường
     environment {
-        DOCKER_REGISTRY = 'your-docker-registry' // Ví dụ: '123456789012.dkr.ecr.us-east-1.amazonaws.com/my-app'
-        DOCKER_CREDENTIALS = credentials('docker-credentials-id') // ID của credentials trong Jenkins
-        KUBE_CONFIG = credentials('kube-config-id') // ID của file kubeconfig trong Jenkins
-        SONAR_HOST = 'http://your-sonarqube-server:9000'
-        SONAR_TOKEN = credentials('sonarqube-token-id')
-        SNYK_TOKEN = credentials('snyk-token-id')
+        DOCKER_REGISTRY = 'your-docker-registry22521355/gs-spring-boot-docker'
+        DOCKER_CREDENTIALS = credentials('docker-credentials-id')
+        KUBE_CONFIG = credentials('kube-config-id') //
+        SONAR_TOKEN = credentials('squ_61d7f0aafd439902e9305d2a18f2e8e808c53fdc')
+        SNYK_TOKEN = credentials('snyk-token-id') //
     }
 
     stages {
-        // Giai đoạn 1: Checkout mã nguồn
+        //Checkout mã nguồn
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/microservice.git'
+                git 'https://github.com/22521355/gs-spring-boot-docker.git'
             }
         }
 
-        // Giai đoạn 2: Build và Test
+        //Build và Test
         stage('Build & Test') {
             steps {
-                sh 'mvn clean install' // Build ứng dụng và chạy unit test
+                sh 'mvn clean install' 
             }
         }
 
-        // Giai đoạn 3: Phân tích chất lượng mã nguồn với SonarQube
+        //Phân tích chất lượng mã nguồn với SonarQube
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
@@ -38,17 +36,16 @@ pipeline {
             }
         }
 
-        // Giai đoạn 4 (Tùy chọn): Quét bảo mật với Snyk/Trivy
+        //Quét bảo mật với Snyk
         stage('Security Scan') {
             steps {
-                // Ví dụ với Snyk
                 sh "snyk auth ${SNYK_TOKEN}"
-                sh "snyk test --all-projects" // Quét các thư viện có lỗ hổng
-                sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" // Quét image sau khi build
+                sh "snyk test --all-projects" 
+                sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" 
             }
         }
 
-        // Giai đoạn 5: Build và Push Docker Image
+        //Build và Push Docker Image
         stage('Build & Push Docker Image') {
             steps {
                 script {
@@ -60,20 +57,18 @@ pipeline {
             }
         }
 
-        // Giai đoạn 6: Deploy lên Kubernetes
+        //Deploy lên Kubernetes
         stage('Deploy to Kubernetes') {
             steps {
-                // Sử dụng kubeconfig đã được cấu hình trong Jenkins
                 sh "kubectl apply -f deployment.yaml"
                 sh "kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}"
             }
         }
     }
 
-    // Các hành động sau khi pipeline kết thúc
     post {
         always {
-            cleanWs() // Dọn dẹp workspace
+            cleanWs()
         }
     }
 }
