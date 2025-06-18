@@ -5,7 +5,7 @@ pipeline {
         DOCKER_REGISTRY = 'your-docker-registry22521355/gs-spring-boot-docker'
         DOCKER_CREDENTIALS = credentials('docker-credentials-id')
         KUBE_CONFIG = credentials('kube-config-id') //
-        SONAR_TOKEN = credentials('squ_61d7f0aafd439902e9305d2a18f2e8e808c53fdc')
+        SONAR_TOKEN = credentials('sonarqube-api-token')
         SNYK_TOKEN = credentials('snyk-token-id') //
     }
 
