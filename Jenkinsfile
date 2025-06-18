@@ -43,7 +43,6 @@ pipeline {
                                       -Dsonar.organization=22521355-1 \
                                       -Dsonar.host.url=https://sonarcloud.io
                                 """
-                                // Lưu ý: Không cần -Dsonar.login=... nữa vì withSonarQubeEnv đã lo việc đó
                             }
                         }
                     }
@@ -51,10 +50,11 @@ pipeline {
                 
                 stage('Security Scan') {
                     steps {
-                        // Ví dụ với Snyk
-                        sh "snyk auth ${SNYK_TOKEN}"
-                        sh "snyk test --all-projects" // Quét các thư viện có lỗ hổng
-                        sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" // Quét image sau khi build
+                        dir('complete') {
+                            sh "snyk auth ${SNYK_TOKEN}"
+                            sh "snyk test --all-projects" 
+                            sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" 
+                        }
                     }
                 }
 
