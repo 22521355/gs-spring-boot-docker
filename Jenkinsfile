@@ -31,6 +31,24 @@ pipeline {
                     }
                 }
 
+                stage('Debug Network') {
+                    steps {
+                        // bat' được dùng để chạy các lệnh của Command Prompt trên Windows
+                        bat 'echo "--- Checking IP Configuration ---"'
+                        bat 'ipconfig'
+                        
+                        bat 'echo "--- Checking listening ports ---"'
+                        bat 'netstat -an | find "9000"'
+                        
+                        // Sử dụng PowerShell để kiểm tra kết nối mạng
+                        bat 'echo "--- Testing connection to localhost:9000 ---"'
+                        powershell 'Test-NetConnection -ComputerName localhost -Port 9000'
+                        
+                        bat 'echo "--- Testing connection to host.docker.internal:9000 ---"'
+                        powershell 'Test-NetConnection -ComputerName host.docker.internal -Port 9000'
+                    }
+                }
+                
                 stage('SonarQube Analysis') {
                     steps {
                         dir('complete') {
