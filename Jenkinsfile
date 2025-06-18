@@ -65,9 +65,11 @@ pipeline {
                 stage('Build & Push Docker Image') {
                     steps {
                         script {
-                            def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}", ".")
-                            docker.withRegistry("https://${DOCKER_REGISTRY}", DOCKER_CREDENTIALS) {
-                                dockerImage.push()
+                            dir('complete') { 
+                                def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}", ".")
+                                docker.withRegistry("https://hub.docker.com", DOCKER_CREDENTIALS) {
+                                    dockerImage.push()
+                                }
                             }
                         }
                     }
