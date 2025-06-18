@@ -82,7 +82,7 @@ pipeline {
                     steps {
                         // Sử dụng credential file 'kubeconfig' đã tạo trong Jenkins.
                         // Khối lệnh này sẽ tự động cấu hình môi trường để kubectl kết nối đúng cluster.
-                        withKubeconfig([credentialsId: 'kube-config-id']) {
+                        withKubeConfig([credentialsId: 'kube-config-id']) {
                             // Chuyển vào thư mục chứa file deployment.yaml
                             dir('complete') {
                                 sh 'echo "Installing kubectl..."'
