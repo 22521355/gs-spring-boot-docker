@@ -70,7 +70,7 @@ pipeline {
                         script {
                             dir('complete') { 
                                 def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}", ".")
-                                docker.withRegistry("https://hub.docker.com", 'docker-credentials-id') {
+                                docker.withRegistry('', 'docker-credentials-id') {
                                     dockerImage.push()
                                 }
                             }
