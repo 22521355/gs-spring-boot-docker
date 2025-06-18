@@ -37,7 +37,7 @@ pipeline {
                             dir('complete') {
                                 sh "mvn sonar:sonar \
                                     -Dsonar.projectKey=my-microservice \
-                                    -Dsonar.host.url=http://localhost:9000 \
+                                    -Dsonar.host.url=http://sonarcloud.io \
                                     -Dsonar.login=${SONAR_TOKEN}"
                             }
                         }
