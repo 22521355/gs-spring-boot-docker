@@ -27,6 +27,8 @@ pipeline {
                     steps {
                         dir('complete') {
                             sh 'mvn clean install'
+                            //tạo ra các thư mục BOOT-INF, META-INF mà Dockerfile cần
+                            sh 'mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)'
                         }
                     }
                 }
@@ -55,7 +57,8 @@ pipeline {
                                 sh 'echo "Installing Snyk CLI..."'
                                 sh 'curl -Lo ./snyk https://static.snyk.io/cli/latest/snyk-linux'
                                 sh 'chmod +x ./snyk'
-                                sh './snyk auth $SNYK_SECRET_TOKEN'                                
+                                sh './snyk auth $SNYK_SECRET_TOKEN'
+                                //bỏ qua lỗi
                                 sh './snyk test --all-projects || true'
                             }
                         }
