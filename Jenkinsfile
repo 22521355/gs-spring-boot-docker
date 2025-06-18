@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
 
     environment {
         DOCKER_REGISTRY = 'your-docker-registry22521355/gs-spring-boot-docker'
@@ -10,65 +10,66 @@ pipeline {
     }
 
     stages {
-        //Checkout mã nguồn
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/22521355/gs-spring-boot-docker.git'
-            }
-        }
+        stage('Pipeline Execution') {
+            agent any
 
-        //Build và Test
-        stage('Build & Test') {
-            steps {
-                sh 'mvn clean install' 
-            }
-        }
-
-        //Phân tích chất lượng mã nguồn với SonarQube
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('MySonarQubeServer') {
-                    sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=my-microservice \
-                        -Dsonar.host.url=${SONAR_HOST} \
-                        -Dsonar.login=${SONAR_TOKEN}"
+            stages {
+                stage('Checkout') {
+                    steps {
+                        git 'https://github.com/22521355/gs-spring-boot-docker.git'
+                    }
                 }
-            }
-        }
 
-        //Quét bảo mật với Snyk
-        stage('Security Scan') {
-            steps {
-                sh "snyk auth ${SNYK_TOKEN}"
-                sh "snyk test --all-projects" 
-                sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" 
-            }
-        }
+                stage('Build & Test') {
+                    steps {
+                        sh 'mvn clean install'
+                    }
+                }
 
-        //Build và Push Docker Image
-        stage('Build & Push Docker Image') {
-            steps {
-                script {
-                    def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}", ".")
-                    docker.withRegistry("https://${DOCKER_REGISTRY}", DOCKER_CREDENTIALS) {
-                        dockerImage.push()
+                stage('SonarQube Analysis') {
+                    steps {
+                        withSonarQubeEnv('MySonarQubeServer') {
+                            sh "mvn sonar:sonar \
+                                -Dsonar.projectKey=my-microservice \
+                                -Dsonar.host.url=${SONAR_HOST} \
+                                -Dsonar.login=${SONAR_TOKEN}"
+                        }
+                    }
+                }
+
+                stage('Security Scan') {
+                    steps {
+                        // Ví dụ với Snyk
+                        sh "snyk auth ${SNYK_TOKEN}"
+                        sh "snyk test --all-projects" // Quét các thư viện có lỗ hổng
+                        sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" // Quét image sau khi build
+                    }
+                }
+
+                stage('Build & Push Docker Image') {
+                    steps {
+                        script {
+                            def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}", ".")
+                            docker.withRegistry("https://${DOCKER_REGISTRY}", DOCKER_CREDENTIALS) {
+                                dockerImage.push()
+                            }
+                        }
+                    }
+                }
+
+                stage('Deploy to Kubernetes') {
+                    steps {
+                        sh "kubectl apply -f deployment.yaml"
+                        sh "kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}"
                     }
                 }
             }
-        }
 
-        //Deploy lên Kubernetes
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh "kubectl apply -f deployment.yaml"
-                sh "kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}"
+            post {
+                cleanup {
+                    cleanWs()
+                }
             }
-        }
-    }
-
-    post {
-        cleanup {
-            cleanWs()
         }
     }
 }
