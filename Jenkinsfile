@@ -1,17 +1,17 @@
 pipeline {
     agent none
 
-    environment {
-        DOCKER_REGISTRY = 'your-docker-registry22521355/gs-spring-boot-docker'
-        DOCKER_CREDENTIALS = credentials('docker-credentials-id')
-        KUBE_CONFIG = credentials('kube-config-id') //
-        SONAR_TOKEN = credentials('sonarqube-api-token')
-        SNYK_TOKEN = credentials('snyk-token-id') //
-    }
-
     stages {
         stage('Pipeline Execution') {
             agent any
+
+            environment {
+                DOCKER_REGISTRY = 'your-docker-registry22521355/gs-spring-boot-docker'
+                DOCKER_CREDENTIALS = credentials('docker-credentials-id')
+                KUBE_CONFIG = credentials('kube-config-id') //
+                SONAR_TOKEN = credentials('sonarqube-api-token')
+                SNYK_TOKEN = credentials('snyk-token-id') //
+            }
 
             stages {
                 stage('Checkout') {
@@ -31,7 +31,7 @@ pipeline {
                         withSonarQubeEnv('MySonarQubeServer') {
                             sh "mvn sonar:sonar \
                                 -Dsonar.projectKey=my-microservice \
-                                -Dsonar.host.url=${SONAR_HOST} \
+                                -Dsonar.host.url=http://localhost:9000 \
                                 -Dsonar.login=${SONAR_TOKEN}"
                         }
                     }
