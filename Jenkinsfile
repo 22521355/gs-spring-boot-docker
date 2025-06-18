@@ -90,14 +90,10 @@ pipeline {
                                     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                                     chmod +x ./kubectl
                                     
-                                    echo "Installing gke-gcloud-auth-plugin..."
-                                    curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
-                                    tar -xf google-cloud-cli-linux-x86_64.tar.gz
-                                    ./google-cloud-sdk/install.sh --quiet
-                                    export PATH=$PATH:$(pwd)/google-cloud-sdk/bin
-                                    gcloud components install gke-gcloud-auth-plugin --quiet
+                                    echo "Testing kubectl connection..."
+                                    ./kubectl cluster-info
                                     
-                                    export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+                                    echo "Applying deployment..."
                                     ./kubectl apply -f deployment.yaml --validate=false
                                     ./kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}
                                 '''
