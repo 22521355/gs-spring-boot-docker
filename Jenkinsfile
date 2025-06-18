@@ -98,7 +98,7 @@ pipeline {
                                     gcloud components install gke-gcloud-auth-plugin --quiet
                                     
                                     export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-                                    ./kubectl apply -f deployment.yaml
+                                    ./kubectl apply -f deployment.yaml --validate=false
                                     ./kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}
                                 '''
                             }
