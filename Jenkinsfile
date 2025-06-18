@@ -33,19 +33,24 @@ pipeline {
 
                 stage('Debug Network') {
                     steps {
-                        // bat' được dùng để chạy các lệnh của Command Prompt trên Windows
-                        bat 'echo "--- Checking IP Configuration ---"'
-                        bat 'ipconfig'
+                        // 'sh' được dùng để chạy các lệnh của Linux
+                        sh 'echo "--- Checking IP Configuration ---"'
+                        sh 'ip addr'
                         
-                        bat 'echo "--- Checking listening ports ---"'
-                        bat 'netstat -an | find "9000"'
+                        sh 'echo "--- Checking listening ports ---"'
+                        // Lỗi "command not found" có thể xảy ra nếu net-tools chưa được cài
+                        // Nếu lỗi, bạn có thể tạm thời bỏ qua dòng này
+                        sh 'netstat -tulpn | grep 9000 || echo "netstat not found, skipping..."'
                         
-                        // Sử dụng PowerShell để kiểm tra kết nối mạng
-                        bat 'echo "--- Testing connection to localhost:9000 ---"'
-                        powershell 'Test-NetConnection -ComputerName localhost -Port 9000'
+                        sh 'echo "--- Testing connection to localhost:9000 ---"'
+                        // Dùng nc (netcat) để kiểm tra kết nối TCP. 
+                        // Lệnh này sẽ báo thành công (succeeded) nếu kết nối được.
+                        sh 'nc -z -v localhost 9000'
                         
-                        bat 'echo "--- Testing connection to host.docker.internal:9000 ---"'
-                        powershell 'Test-NetConnection -ComputerName host.docker.internal -Port 9000'
+                        sh 'echo "--- Testing connection to host.docker.internal:9000 ---"'
+                        // Thử kết nối bằng curl để xem phản hồi
+                        // Cờ --fail sẽ khiến bước này thất bại nếu không kết nối được
+                        sh 'curl --fail http://host.docker.internal:9000 || echo "Failed to connect to host.docker.internal"'
                     }
                 }
                 
