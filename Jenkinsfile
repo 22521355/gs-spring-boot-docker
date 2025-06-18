@@ -68,8 +68,11 @@ pipeline {
 
     post {
         always {
-            node {
-                cleanWs()
+            stage('Cleanup') {
+                steps {
+                    cleanWs()
+                }
             }
         }
     }
+}
