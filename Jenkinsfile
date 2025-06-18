@@ -33,16 +33,22 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
-                        withSonarQubeEnv('MySonarQubeServer') {
+                        // Tên 'MySonarQubeServer' vẫn giữ nguyên vì nó tham chiếu đến cấu hình trong Jenkins
+                        withSonarQubeEnv('MySonarQubeServer') { 
                             dir('complete') {
-                                sh "mvn sonar:sonar \
-                                    -Dsonar.projectKey=my-microservice \
-                                    -Dsonar.host.url=http://sonarcloud.io \
-                                    -Dsonar.login=${SONAR_TOKEN}"
+                                // Sử dụng 3 dấu ngoặc kép """ để viết lệnh trên nhiều dòng cho dễ đọc
+                                sh """
+                                    mvn sonar:sonar \
+                                      -Dsonar.projectKey=22521355 \
+                                      -Dsonar.organization=Nhật Thành \
+                                      -Dsonar.host.url=https://sonarcloud.io
+                                """
+                                // Lưu ý: Không cần -Dsonar.login=... nữa vì withSonarQubeEnv đã lo việc đó
                             }
                         }
                     }
                 }
+                
                 stage('Security Scan') {
                     steps {
                         // Ví dụ với Snyk
