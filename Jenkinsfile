@@ -16,8 +16,7 @@ pipeline {
             stages {
                 stage('Checkout') {
                     steps {
-                        git 'https://github.com/22521355/gs-spring-boot-docker.git'
-                    }
+                        git url: 'https://github.com/22521355/gs-spring-boot-docker.git', branch: 'main'}
                 }
 
                 stage('Build & Test') {
