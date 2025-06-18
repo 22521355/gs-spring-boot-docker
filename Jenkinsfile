@@ -39,8 +39,8 @@ pipeline {
                                 // Sử dụng 3 dấu ngoặc kép """ để viết lệnh trên nhiều dòng cho dễ đọc
                                 sh """
                                     mvn sonar:sonar \
-                                      -Dsonar.projectKey=22521355 \
-                                      -Dsonar.organization=Nhật Thành \
+                                      -Dsonar.projectKey=22521355-1 \
+                                      -Dsonar.organization=22521355 \
                                       -Dsonar.host.url=https://sonarcloud.io
                                 """
                                 // Lưu ý: Không cần -Dsonar.login=... nữa vì withSonarQubeEnv đã lo việc đó
