@@ -113,7 +113,7 @@ pipeline {
                                         
                                         echo "Applying deployment..."
                                         ./kubectl apply -f deployment.yaml
-                                        ./kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}
+                                        ./kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${BUILD_ID}
                                     '''
                                 }
                             }
