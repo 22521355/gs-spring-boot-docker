@@ -6,7 +6,7 @@ pipeline {
             agent any
 
             environment {
-                DOCKER_REGISTRY = 'your-docker-registry22521355/gs-spring-boot-docker'
+                DOCKER_REGISTRY = '22521355/gs-spring-boot-docker'
                 DOCKER_CREDENTIALS = credentials('docker-credentials-id')
                 KUBE_CONFIG = credentials('kube-config-id') //
                 SONAR_TOKEN = credentials('sonarqube-api-token')
