@@ -7,7 +7,7 @@ pipeline {
 
             environment {
                 DOCKER_REGISTRY = '22521355/gs-spring-boot-docker'
-                DOCKER_CREDENTIALS = credentials('docker-credentials-id')
+                //DOCKER_CREDENTIALS = credentials('docker-credentials-id')
                 KUBE_CONFIG = credentials('kube-config-id') //
                 SONAR_TOKEN = credentials('sonarqube-api-token')
                 SNYK_TOKEN = credentials('snyk-token-id') //
@@ -70,7 +70,7 @@ pipeline {
                         script {
                             dir('complete') { 
                                 def dockerImage = docker.build("${DOCKER_REGISTRY}:${env.BUILD_ID}", ".")
-                                docker.withRegistry("https://hub.docker.com", DOCKER_CREDENTIALS) {
+                                docker.withRegistry("https://hub.docker.com", 'docker-credentials-id') {
                                     dockerImage.push()
                                 }
                             }
