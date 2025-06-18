@@ -33,11 +33,13 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
+                        dir('complete') {
                         withSonarQubeEnv('MySonarQubeServer') {
                             sh "mvn sonar:sonar \
                                 -Dsonar.projectKey=my-microservice \
                                 -Dsonar.host.url=http://localhost:9000 \
                                 -Dsonar.login=${SONAR_TOKEN}"
+                        }
                         }
                     }
                 }
