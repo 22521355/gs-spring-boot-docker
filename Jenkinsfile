@@ -40,7 +40,7 @@ pipeline {
                                 sh """
                                     mvn sonar:sonar \
                                       -Dsonar.projectKey=22521355-1 \
-                                      -Dsonar.organization=22521355 \
+                                      -Dsonar.organization=22521355-1 \
                                       -Dsonar.host.url=https://sonarcloud.io
                                 """
                                 // Lưu ý: Không cần -Dsonar.login=... nữa vì withSonarQubeEnv đã lo việc đó
