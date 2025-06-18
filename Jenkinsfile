@@ -80,8 +80,20 @@ pipeline {
 
                 stage('Deploy to Kubernetes') {
                     steps {
-                        sh "kubectl apply -f deployment.yaml"
-                        sh "kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}"
+                        // Sử dụng credential file 'kubeconfig' đã tạo trong Jenkins.
+                        // Khối lệnh này sẽ tự động cấu hình môi trường để kubectl kết nối đúng cluster.
+                        withKubeconfig([credentialsId: 'kube-config-id']) {
+                            // Chuyển vào thư mục chứa file deployment.yaml
+                            dir('complete') {
+                                sh 'echo "Installing kubectl..."'
+                                sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+                                sh 'chmod +x ./kubectl'
+                                
+                                sh "./kubectl apply -f deployment.yaml"
+                                
+                                sh "./kubectl set image deployment/my-app my-app=${DOCKER_REGISTRY}:${env.BUILD_ID}"
+                            }
+                        }
                     }
                 }
             }
