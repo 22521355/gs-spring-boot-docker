@@ -51,9 +51,13 @@ pipeline {
                 stage('Security Scan') {
                     steps {
                         dir('complete') {
-                            sh "snyk auth ${SNYK_TOKEN}"
-                            sh "snyk test --all-projects" 
-                            sh "snyk container test ${DOCKER_REGISTRY}:${env.BUILD_ID}" 
+                            withCredentials([string(credentialsId: 'snyk-token-id', variable: 'SNYK_SECRET_TOKEN')]) {                     
+                                sh 'echo "Installing Snyk CLI..."'
+                                sh 'curl -Lo ./snyk https://static.snyk.io/cli/latest/snyk-linux'
+                                sh 'chmod +x ./snyk'
+                                sh './snyk auth $SNYK_SECRET_TOKEN'                                
+                                sh './snyk test --all-projects'
+                            }
                         }
                     }
                 }
