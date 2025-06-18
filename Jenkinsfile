@@ -25,7 +25,9 @@ pipeline {
 
                 stage('Build & Test') {
                     steps {
-                        sh 'mvn clean install'
+                        dir('complete') {
+                            sh 'mvn clean install'
+                        }
                     }
                 }
 
