@@ -13,6 +13,10 @@ pipeline {
                 SNYK_TOKEN = credentials('snyk-token-id') //
             }
 
+            tools {
+                maven 'Maven-3.9.6'
+            }
+            
             stages {
                 stage('Checkout') {
                     steps {
